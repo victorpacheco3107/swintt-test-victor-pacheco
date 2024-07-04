@@ -1,0 +1,124 @@
+<div *ngIf="!isConfirm">
+  <div class="d-flex align-items-center">
+    <h4 class="m-auto m-t-10">Welcome, test developed by Victor Pacheco</h4>
+  </div>
+
+  <button (click)="google()" mat-stroked-button class="w-100">
+    <div class="d-flex align-items-center">
+      <img src="assets/images/google-icon.svg" alt="google" width="16" class="m-r-8"/>
+      <span>Sign up with Google</span>
+    </div>
+  </button>
+
+  <div class="d-flex align-items-center">
+    <span class="m-auto m-t-10">or sign up with your email</span>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="signUp()">
+    <!-- email -->
+    <mat-form-field appearance="outline" class="w-100 m-t-10" color="primary">
+      <mat-label>Email</mat-label>
+      <input matInput  formControlName="email" placeholder="Type your email" />
+      <mat-hint *ngIf="f['email'].touched && f['email'].invalid" class="error-msg" >
+        <div class="hint-error" *ngIf="f['email'].errors && f['email'].errors['required']">Email is required</div>
+        <div class="hint-error" *ngIf="f['email'].errors && f['email'].errors['pattern']">Email invalid</div>
+      </mat-hint>
+    </mat-form-field>
+
+
+    <!-- password -->
+    <mat-form-field appearance="outline" class="w-100 m-t-10" color="primary">
+      <mat-label>Password</mat-label>
+      <input matInput type="password"  formControlName="password" placeholder="Your password should be have the following:"
+             (blur)="showPasswordHints=false" (focus)="showPasswordHints=true" />
+    </mat-form-field>
+
+    <div *ngIf="showPasswordHints && f['password'].value" class="passwordHints" >
+      <div [ngClass]="{'hint-success': !f['password'].hasError('minlength'),'hint-error': f['password'].hasError('minlength')}" class="d-flex">
+        <i-tabler *ngIf="!f['password'].hasError('minlength')" name="circle-check" class="d-flex"></i-tabler>
+        <i-tabler *ngIf="f['password'].hasError('minlength')" name="alert-circle" class="d-flex"></i-tabler>
+        <span>Length must be minimum 8</span>
+      </div>
+      <div [ngClass]="{'hint-success': !f['password'].hasError('lower'),'hint-error': f['password'].hasError('lower')}" class="d-flex">
+        <i-tabler *ngIf="!f['password'].hasError('lower')" name="circle-check" class="d-flex"></i-tabler>
+        <i-tabler *ngIf="f['password'].hasError('lower')" name="alert-circle" class="d-flex"></i-tabler>
+        <span>A lower case</span>
+      </div>
+      <div [ngClass]="{'hint-success': !f['password'].hasError('upper'),'hint-error': f['password'].hasError('upper')}" class="d-flex">
+        <i-tabler *ngIf="!f['password'].hasError('upper')" name="circle-check" class="d-flex"></i-tabler>
+        <i-tabler *ngIf="f['password'].hasError('upper')" name="alert-circle" class="d-flex"></i-tabler>
+        <span>A capital letter</span>
+      </div>
+      <div [ngClass]="{'hint-success': !f['password'].hasError('number'),'hint-error': f['password'].hasError('number')}" class="d-flex">
+        <i-tabler *ngIf="!f['password'].hasError('number')" name="circle-check" class="d-flex"></i-tabler>
+        <i-tabler *ngIf="f['password'].hasError('number')" name="alert-circle" class="d-flex"></i-tabler>
+        <span>A number</span>
+      </div>
+      <div [ngClass]="{'hint-success': !f['password'].hasError('character'),'hint-error': f['password'].hasError('character')}" class="d-flex">
+        <i-tabler *ngIf="!f['password'].hasError('character')" name="circle-check" class="d-flex"></i-tabler>
+        <i-tabler *ngIf="f['password'].hasError('character')" name="alert-circle" class="d-flex"></i-tabler>
+        <span>A special character</span>
+      </div>
+      <div *ngIf="f['password'].hasError('space')" class="d-flex hint-error">
+        <i-tabler name="alert-circle" class="d-flex"></i-tabler>
+        <span>Password cannot begin or end with spaces</span>
+      </div>
+    </div>
+    <div class="bg-light-{{this.typeAlert}}" role="alert" *ngIf="showAlert">
+      <h5 class="mat-subtitle-2 text-{{this.typeAlert}} d-flex align-items-center">
+        <i-tabler name="info-circle" class="d-flex"></i-tabler> {{messageAlert}}
+      </h5>
+    </div>
+
+
+    <button mat-flat-button color="primary" class="w-100 m-t-10" [class.spinner]="loading" [disabled]="!form.valid || loading">Sign up</button>
+
+  </form>
+
+  <div class="m-t-10">
+    <span>Do you already have an account?</span>
+    <a [routerLink]="['/login']" class="text-decoration-none text-primary"> Sign in</a>
+  </div>
+</div>
+
+<div *ngIf="isConfirm">
+  <h4>Email verification</h4>
+  <span>We have sent a verification code to your email, enter the code in the field below</span>
+
+  <form [formGroup]="formVerification"  (ngSubmit)="confirmSignUp()" class="m-t-10">
+    <mat-form-field appearance="outline" class="w-100" color="primary">
+      <mat-label>Enter your verification code</mat-label>
+      <input formControlName="code"  matInput />
+    </mat-form-field>
+
+    <div role="alert" *ngIf="showAlert">
+      <h5 class="text-{{this.typeAlert}} d-flex align-items-center">
+        <i-tabler name="info-circle" class="d-flex"></i-tabler>
+        {{messageAlert}}
+      </h5>
+    </div>
+
+    <button mat-flat-button color="primary" class="w-100" [class.spinner]="loading" [disabled]="!formVerification.valid || loading">
+      Verify my email
+    </button>
+    <a [routerLink]="['/login']" mat-stroked-button color="primary" class="w-100 m-t-10">
+      Go to Sign in
+    </a>
+  </form>
+
+  <div *ngIf="!limitResendReached" class="m-t-10">
+    <span>Have not you received the code?</span>
+    <a *ngIf="showResendLink && !loadingResend" (click)="resendSignUp()" class="text-decoration-none text-primary" style="cursor: pointer">
+      Resend
+    </a>
+    <span *ngIf="loadingResend">
+      Sending...
+    </span>
+    <span *ngIf="!showResendLink && !loadingResend">
+      Wait {{timeToShowResendLink}} to resend another code
+    </span>
+  </div>
+  <div *ngIf="limitResendReached" class="m-t-10">
+    You have reached the maximum resend limit, try resending another code later or enter the last code received.
+  </div>
+</div>

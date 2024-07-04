@@ -1,0 +1,366 @@
+{
+	"info": {
+		"_postman_id": "b619704b-6521-446f-bf17-4a37dd82f3f3",
+		"name": "Notes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "553616"
+	},
+	"item": [
+		{
+			"name": "Create note",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let descriptionCreated = pm.variables.replaceIn(\"{{$randomLoremSentences}}\")",
+							"pm.collectionVariables.set(\"descriptionCreated\", descriptionCreated);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Test description created\", function () {",
+							"    pm.expect(pm.collectionVariables.get(\"descriptionCreated\")).to.equal(response['description']);",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"idCreated\", response['id']);",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"{{descriptionCreated}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.{{region}}.amazonaws.com/v1/notes",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"{{region}}",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all notes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Test description created previusly\", function () {",
+							"    for(var i in response){",
+							"        if (response[i]['id'] == pm.collectionVariables.get(\"idCreated\")){            ",
+							"            pm.expect(pm.collectionVariables.get(\"descriptionCreated\")).to.equal(response[i]['description']);        ",
+							"        }",
+							"    }    ",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.{{region}}.amazonaws.com/v1/notes",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"{{region}}",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get note by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Test description created previusly\", function () {",
+							"    pm.expect(pm.collectionVariables.get(\"descriptionCreated\")).to.equal(response['description']);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.{{region}}.amazonaws.com/v1/notes/{{idCreated}}",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"{{region}}",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"notes",
+						"{{idCreated}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update note by id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let descriptionUpdated = pm.variables.replaceIn(\"{{$randomLoremSentences}}\")",
+							"pm.collectionVariables.set(\"descriptionUpdated\", descriptionUpdated);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Test description updated\", function () {",
+							"    pm.expect(pm.collectionVariables.get(\"descriptionUpdated\")).to.equal(response['description']);",
+							"});",
+							"",
+							"pm.test(\"Test description updated in get by id\", function () {",
+							"",
+							"    const apiId = pm.variables.replaceIn(\"{{apiId}}\");",
+							"    const region = pm.variables.replaceIn(\"{{region}}\");",
+							"    const idCreated = pm.variables.replaceIn(\"{{idCreated}}\");",
+							"",
+							"    pm.sendRequest({",
+							"        url:  \"https://\" + apiId + \".execute-api.\" + region + \".amazonaws.com/v1/notes/\" + idCreated, ",
+							"        method: 'GET',",
+							"        header: {",
+							"            'Authorization': \"Bearer \" + pm.variables.get(\"token\")",
+							"        },",
+							"    }, (err, res) => {",
+							"        pm.expect(res.code).to.equal(200);",
+							"        pm.expect(pm.collectionVariables.get(\"descriptionUpdated\")).to.equal(res.json()['description']);        ",
+							"    });",
+							"",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"{{descriptionUpdated}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.{{region}}.amazonaws.com/v1/notes/{{idCreated}}",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"{{region}}",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"notes",
+						"{{idCreated}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete note by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const response = pm.response.json();",
+							"const idCreated = pm.variables.replaceIn(\"{{idCreated}}\");",
+							"",
+							"pm.test(\"Test message deleted\", function () {",
+							"    pm.expect(\"Deleted note \" + idCreated).to.equal(response['message']);",
+							"});",
+							"",
+							"pm.test(\"Test task deleted in get by id\", function () {",
+							"",
+							"    const apiId = pm.variables.replaceIn(\"{{apiId}}\");",
+							"    const region = pm.variables.replaceIn(\"{{region}}\");",
+							"    ",
+							"    pm.sendRequest({",
+							"        url:  \"https://\" + apiId + \".execute-api.\" + region + \".amazonaws.com/v1/notes/\" + idCreated, ",
+							"        method: 'GET',",
+							"        header: {",
+							"            'Authorization': \"Bearer \" + pm.variables.get(\"token\")",
+							"        },",
+							"    }, (err, res) => {",
+							"        pm.expect(res.code).to.equal(404);",
+							"        pm.expect(\"Note not found\").to.equal(res.json()['message']);        ",
+							"    });",
+							"",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.{{region}}.amazonaws.com/v1/notes/{{idCreated}}",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"{{region}}",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"notes",
+						"{{idCreated}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.variables.set('apiId', 'i2vqsr9bwd');",
+					"pm.variables.set('region', 'eu-west-1');",
+					"pm.variables.set('token', 'eyJraWQiOiJjdEN1cm93NzNPUXM3TmdNUjdndU44aHpWQ0dab2hSNWZCRDN6eXpjR0s0PSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoibkw4NHdsV2RRSmlFX0I0NVFLZVVFQSIsInN1YiI6IjAyNjUxNDY0LTIwYjEtNzA3OS00OWRmLTkzNDc2ZjIzN2JmZiIsImNvZ25pdG86Z3JvdXBzIjpbImV1LXdlc3QtMV9DMzZGWENieW9fR29vZ2xlIl0sImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMS5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTFfQzM2RlhDYnlvIiwiY29nbml0bzp1c2VybmFtZSI6Imdvb2dsZV8xMDYwOTkzNTgwMDE0NTMxNzI5MDkiLCJub25jZSI6InBBR1g0Vm5lTGtmMTBqOHo0UnROUVVoX3o1aFBtQTRWX2xZS1d1NHBka0ctUjgtdzY4dHJZb3l5cVprSWJ0Z1JNVWViS0F0Y0JwdVlmb3V4Z09rWGJZQW1HT3JrLU5qM0hWYXBUTE5ra1pueG5sRGlSeUZRRnUtR0oyWVJuVm9UQWh5V1ZldjVpTjFTRzBSNTcxb1ZiVHQtbHZLWGhpU0N4bjZhWWkwNExTcyIsIm9yaWdpbl9qdGkiOiIxYTMzZDJmYy03MWQ3LTRjODQtOTRjYi03OGFmMjEzY2Y3ZGYiLCJhdWQiOiIzZXRhcDlnMXFiNzdwcm03Y2VoMnY2bGJtMiIsImlkZW50aXRpZXMiOlt7ImRhdGVDcmVhdGVkIjoiMTcyMDEwNTc1MzQ0MSIsInVzZXJJZCI6IjEwNjA5OTM1ODAwMTQ1MzE3MjkwOSIsInByb3ZpZGVyTmFtZSI6Ikdvb2dsZSIsInByb3ZpZGVyVHlwZSI6Ikdvb2dsZSIsImlzc3VlciI6bnVsbCwicHJpbWFyeSI6InRydWUifV0sInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzIwMTA1NzU0LCJleHAiOjE3MjAxMDkzNTQsImlhdCI6MTcyMDEwNTc1NCwianRpIjoiMmQ1YjE3NDYtMWE4Ny00NjdiLTlhNGQtMGE3ZmYwMTViMWNjIiwiZW1haWwiOiJwYWNoZWNvdmljdG9yMzEwNzJAZ21haWwuY29tIn0.MYtbsK385JZkIrwORX9Yib_j5k3M13p-fmOQvNgGoagme8naODRRHvpqnID7j2eup6VcjI_I6I5tHPBLowmD-tST03jeJAY_JAADKBVfaZCmfXKMj-8Ocgh8izS1nI31dyIF1r6RGnxvOLDJ67S3ehhCzakW7yjJy1ZgDXFlANcL8iBCe63zixd48RFefUxFKsyTtzaRcpgcnDB1FmGaEuPvgD5Zo0OvlRAqECpT4FHJn--D21I8miD-3scyV0hr5jlZrHIWLpJqihazseurvgzxGzi3UT3ovBk_95dCDr5H4TtJMimNl4gfbbF77MaGqv06LHVAfVhNcwBfBxvZvQ');"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "descriptionCreated",
+			"value": ""
+		},
+		{
+			"key": "idCreated",
+			"value": ""
+		},
+		{
+			"key": "descriptionUpdated",
+			"value": ""
+		}
+	]
+}

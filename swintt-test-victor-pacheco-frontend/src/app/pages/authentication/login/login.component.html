@@ -1,0 +1,103 @@
+<div *ngIf="!isConfirm">
+  <div class="d-flex align-items-center">
+    <h4 class="m-auto m-t-10">Welcome, test developed by Victor Pacheco</h4>
+  </div>
+
+  <a (click)="google()" mat-stroked-button class="w-100">
+    <div class="d-flex align-items-center">
+      <img src="./assets/images/google-icon.svg" alt="google" width="16" class="m-r-8" />
+      <span>Sign in with Google</span>
+    </div>
+  </a>
+
+  <div class="d-flex align-items-center">
+    <span class="m-auto m-t-10">or sign in with your email and password</span>
+  </div>
+
+  <form class="m-t-30" [formGroup]="form" (ngSubmit)="signIn()">
+    <!-- email -->
+    <mat-form-field appearance="outline" class="w-100 m-t-10" color="primary" >
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Type your email"/>
+      <mat-hint *ngIf="f['email'].touched && f['email'].invalid" class="error-msg" >
+        <div class="text-error" *ngIf="f['email'].errors && f['email'].errors['required']">Email is required</div>
+        <div class="text-error" *ngIf="f['email'].errors && f['email'].errors['pattern']">Email invalid</div>
+      </mat-hint>
+    </mat-form-field>
+
+    <!-- password -->
+    <mat-form-field appearance="outline" class="w-100 m-t-10" color="primary">
+      <mat-label i18n>Password</mat-label>
+      <input matInput type="password" formControlName="password" placeholder="Type your password"/>
+      <mat-hint *ngIf="f['password'].touched && f['password'].invalid" class="error-msg" >
+        <div class="text-error" *ngIf="f['password'].errors && f['password'].errors['required']">Password is required</div>
+      </mat-hint>
+    </mat-form-field>
+
+    <div class="bg-light-{{this.typeAlert}}" role="alert" *ngIf="showAlert">
+      <h5 class="mat-subtitle-2 text-{{this.typeAlert}} d-flex align-items-center">
+        <i-tabler name="info-circle" class="icon-20 m-r-8 d-flex"></i-tabler> {{messageAlert}}
+      </h5>
+    </div>
+
+    <div class="d-flex align-items-center">
+      <a  [routerLink]="['/forgot-password']" class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14">
+        Forgot your password?
+      </a>
+    </div>
+
+    <button mat-flat-button color="primary" class="w-100 m-t-10" [class.spinner]="loading" [disabled]="!form.valid || loading">
+      Sign in
+    </button>
+
+  </form>
+
+  <span class="m-t-10">
+      <span i18n>Are you new?</span>
+      <a [routerLink]="['/register']" class="text-decoration-none text-primary"> Sign up</a>
+    </span>
+</div>
+
+<div *ngIf="isConfirm" class="col-lg-9 max-width-form">
+
+  <h4>Email verification</h4>
+  <span>We have sent a verification code to your email, enter the code in the field below</span>
+
+  <form [formGroup]="formVerification"  (ngSubmit)="confirmSignUp()" class="m-t-10">
+    <mat-form-field appearance="outline" class="w-100" color="primary">
+      <mat-label>Enter your verification code</mat-label>
+      <input formControlName="code"  matInput />
+    </mat-form-field>
+
+    <div role="alert" *ngIf="showAlert">
+      <h5 class="text-{{this.typeAlert}} d-flex align-items-center">
+        <i-tabler name="info-circle" class="d-flex"></i-tabler>
+        {{messageAlert}}
+      </h5>
+    </div>
+
+    <button mat-flat-button color="primary" class="w-100" [class.spinner]="loading" [disabled]="!formVerification.valid || loading">
+      Verify my email
+    </button>
+    <a (click)="reloadPage()" mat-stroked-button color="primary" class="w-100 m-t-10">
+      Go to Sign in
+    </a>
+  </form>
+
+  <div *ngIf="!limitResendReached" class="m-t-10">
+    <span>Have not you received the code?</span>
+    <a *ngIf="showResendLink && !loadingResend" (click)="resendSignUp(false)" class="text-decoration-none text-primary" style="cursor: pointer" i18n>
+      Resend
+    </a>
+    <span *ngIf="loadingResend">
+      Sending...
+    </span>
+    <span *ngIf="!showResendLink && !loadingResend">
+      Wait {{timeToShowResendLink}} to resend another code
+    </span>
+  </div>
+  <div *ngIf="limitResendReached" class="m-t-10">
+    You have reached the maximum resend limit, try resending another code later or enter the last code received.
+  </div>
+
+</div>

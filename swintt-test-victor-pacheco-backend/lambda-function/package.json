@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "@types/aws-lambda": "^8.10.92",
+    "@types/node": "^20.9.0"
+  }
+}
