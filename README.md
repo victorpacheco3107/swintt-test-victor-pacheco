@@ -70,6 +70,7 @@ Through this link, you will be able to access all the functionalities of the app
 The frontend is a standard Angular v16 application. Its main features are:
 - Use of `Guards` to allow access only to logged-in users.
 - Use of `aws-amplify` to handle logins and requests to the backend (with the Authorization header).
+- Google sign up and sign in
 - Email verification and password recovery (for users who created an account without Google)
 
 ### Screenshots
